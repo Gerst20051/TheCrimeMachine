@@ -5,9 +5,14 @@
   "dependencies": {
     "@material-ui/core": "^3.9.2",
     "axios": "^0.18.0",
+    "deck.gl": "^6.4.7",
     "react": "^16.8.5",
     "react-dom": "^16.8.5",
+    "react-map-gl": "^4.1.1",
     "react-scripts": "2.1.8"
+  },
+  "devDependencies": {
+    "csvtojson": "^2.0.8"
   },
   "scripts": {
     "start": "react-scripts start",
