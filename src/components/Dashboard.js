@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React, { Component } from 'react';
+import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles'
@@ -48,6 +49,9 @@ class Dashboard extends Component {
               ? <Typography className={classes.label}>Loading...</Typography>
               : <Typography className={classes.label}>Loaded ({data.length}) Items</Typography>
           }
+          <>
+          <Button href="/map">See Map</Button>
+          </>
         </Paper>
       </>
     );
