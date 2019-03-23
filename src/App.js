@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-import { Router, Route, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import Dashboard from './components/Dashboard';
 
-// import Dashboard from './components/Dashboard';
 import CrimeMap from './components/Map';
 
 class App extends Component {
@@ -10,8 +9,8 @@ class App extends Component {
     return (
       <Router>
         <Switch>
-          <Route path="/" component={Dashboard}/>
-          <Route path="/map" component={CrimeMap}/>
+          <Route exact path="/" component={Dashboard}/>
+          <Route exact path="/map" component={CrimeMap}/>
         </Switch>
       </Router>
     )
