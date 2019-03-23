@@ -3,7 +3,7 @@ import React, { PureComponent } from 'react';
 import MapGL from 'react-map-gl';
 import DeckGL, { GeoJsonLayer } from 'deck.gl';
 
-class Map extends PureComponent {
+class CrimeMap extends PureComponent {
   constructor(props) {
     super(props);
 
@@ -81,4 +81,4 @@ class Map extends PureComponent {
   }
 }
 
-export default Map;
+export default CrimeMap;
