@@ -13,6 +13,8 @@ class CrimeMap extends PureComponent {
     };
 
     this.state = {
+      data: null,
+      geojson: null,
       viewport: {
         bearing: 0,
         height: window.innerHeight,
@@ -24,13 +26,19 @@ class CrimeMap extends PureComponent {
         width: window.innerWidth,
         zoom: mapConfig.zoom,
       },
-      geojson: null,
     };
 
     axios.get('mapping.geojson')
       .then(({ data }) => {
         this.setState({
           geojson: data,
+        });
+      });
+
+    axios.get('data.json')
+      .then(({ data }) => {
+        this.setState({
+          data,
         });
       });
 
@@ -48,9 +56,53 @@ class CrimeMap extends PureComponent {
     gl.blendEquation(gl.FUNC_ADD);
   }
 
-  render() {
-    const { viewport, geojson } = this.state;
+  getFeatureFromGeoJson(id) {
+    return this.state.geojson.features.find(feature => {
+      return feature.properties.id === parseInt(id);
+    });
+  }
 
+  convertValueToColor(minimum, maximum, value) {
+    const ratio = 2 * (value - minimum) / (maximum - minimum);
+    const b = parseInt(Math.max(0, 255 * (1 - ratio)));
+    const r = parseInt(Math.max(0, 255 * (ratio - 1)));
+    const g = 255 - b - r;
+    return [ r, g, b ];
+  }
+
+  getValueForPropertyAndYear(property, year) {
+    return Math.random();
+  }
+
+  getAreaLayersToDisplay() {
+    const propertyToDisplay = 'Violent_Crimes';
+    const yearToDisplay = '2016';
+
+    const layers = [];
+
+    this.state.data.forEach(area => {
+      const feature = this.getFeatureFromGeoJson(area.NPA);
+      const value = this.getValueForPropertyAndYear(propertyToDisplay, yearToDisplay);
+      const color = this.convertValueToColor(0, 1, value);
+
+      layers.push(new GeoJsonLayer({
+        data: {
+          type: 'FeatureCollection',
+          features: [
+            feature,
+          ],
+        },
+        filled: true,
+        getFillColor: [color[0], color[1], color[2], 50],
+        id: `geojson-layer-${area.NPA}`,
+        stroked: false,
+      }));
+    });
+
+    return layers;
+  }
+
+  getLayers(geojson) {
     const geojsonLayer = new GeoJsonLayer({
       data: geojson,
       filled: false,
@@ -60,6 +112,13 @@ class CrimeMap extends PureComponent {
       lineWidthScale: 1,
       stroked: true,
     });
+
+    const areaLayers = ((this.state.data && this.state.geojson) && this.getAreaLayersToDisplay()) || [];
+    return [geojsonLayer].concat(areaLayers);
+  }
+
+  render() {
+    const { viewport, geojson } = this.state;
 
     return (
       <div className="reactmapgldeckgl">
@@ -72,7 +131,7 @@ class CrimeMap extends PureComponent {
         >
           <DeckGL
             {...viewport}
-            layers={[geojsonLayer]}
+            layers={this.getLayers(geojson)}
             onWebGLInitialized={this.initialize}
           />
         </MapGL>
