@@ -9,6 +9,11 @@ const fs = require('fs');
         return output;
     }, {});
     data.map(item => {
+        Object.keys(item).forEach(key => {
+            if (!item[key] || key.includes('_Rate_') || key.includes('_Violations_2')) {
+                delete item[key];
+            }
+        });
         item['Name'] = lookupTable[item['NPA']] || `NPA ${item['NPA']}`;
         return item;
     });
